@@ -1,0 +1,19 @@
+Scenario.name = [Cisco]
+Scenario.simulateConnections = true
+
+Scenario.endTime =  254150
+Scenario.endTime =  2071530
+
+Group.movementModel = ExternalMovement
+#ExternalMovement.file = ../../traces/taxis_san_francisco.txt
+#ExternalMovement.file = ../../traces/taxis_san_francisco-mini.txt
+ExternalMovement.file = traces/taxis_san_francisco.txt
+
+
+MovementModel.worldSize = 451283,566212
+
+Group.nrofHosts = 539
+Group.groupID = x
+Events1.hosts = 0, 40
+Events1.tohosts = 0, 40
+

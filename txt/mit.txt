@@ -1,0 +1,19 @@
+Scenario.endTime =  16981816
+#Scenario.endTime =  200356
+Scenario.endTime =  86000
+
+Events2.class = StandardEventsReader
+Events2.filePath = traces/RealityConnectionTraceFinal.txt
+Events2.nrofPreload = 205187
+
+Scenario.nrofHostGroups = 2
+
+Group1.nrofHosts = 21
+Group1.groupID = x
+Group1.bufferSize = 1000
+
+Group2.nrofHosts = 76
+Group2.groupID = y
+Group2.bufferSize = 1000
+
+

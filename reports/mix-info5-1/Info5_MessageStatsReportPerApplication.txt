@@ -1,0 +1,46 @@
+Message stats for scenario Info5
+sim_time: 86000.0000
+Message stats for nodetypes java.util.Hashtable$Enumerator@7440e464
+Message stats for nodetype x
+===================================
+relayed: 12004
+Message stats for application r-msg
+===================================
+created: 157
+started: 5783
+relayed: 5783
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 148
+delivery_prob: 0.9427
+response_prob: 0.0000
+noverhead_ratio: 38.0743
+latency_avg: 4825.9865
+latency_med: 600.0000
+hopcount_avg: 3.7162
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application msg
+===================================
+created: 172
+started: 6256
+relayed: 6221
+aborted: 35
+dropped: 0
+removed: 0
+delivered: 157
+delivery_prob: 0.9128
+response_prob: 0.0000
+noverhead_ratio: 38.6242
+latency_avg: 31847.2739
+latency_med: 40677.0000
+hopcount_avg: 3.8280
+hopcount_med_med: 3
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN

@@ -1,0 +1,20 @@
+Message stats for scenario Info5
+sim_time: 86000.0000
+created: 329
+started: 12039
+relayed: 12004
+aborted: 35
+dropped: 0
+removed: 0
+delivered: 305
+delivery_prob: 0.9271
+response_prob: 0.0000
+overhead_ratio: 38.3574
+latency_avg: 18735.3049
+latency_med: 3289.0000
+hopcount_avg: 3.7738
+hopcount_med: 3
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN

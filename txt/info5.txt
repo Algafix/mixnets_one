@@ -1,0 +1,19 @@
+Scenario.name = Info5
+
+#Scenario.endTime =  254150
+Scenario.endTime =  86000
+
+#Scenario.endTime = 3000
+
+Events2.class = StandardEventsReader
+Events2.filePath = traces/Haggle3-Infocom5.csv
+Events2.nrofPreload = 44918
+
+Group.nrofHosts = 41
+Group.groupID = x
+Events1.hosts = 0,40
+Events1.tohosts = 0,40
+
+
+Report.reportDir = [reports_aleix/mix-info5-1;reports_aleix/mix-info5-2;reports_aleix/mix-info5-3;reports_aleix/mix-info5-4;reports_aleix/mix-info5-5]
+

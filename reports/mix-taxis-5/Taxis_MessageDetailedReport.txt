@@ -1,0 +1,14 @@
+Message stats for scenario Taxis
+sim_time: 86000.0000
+41186.0 Taxis
+48741.0 Taxis
+59054.0 Taxis
+63055.0 Taxis
+66537.0 Taxis
+76140.0 Taxis
+66576.0 Taxis
+68329.0 Taxis
+80688.0 Taxis
+67739.0 Taxis
+81763.0 Taxis
+80719.0 Taxis

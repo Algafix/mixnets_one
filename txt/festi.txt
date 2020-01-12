@@ -1,0 +1,16 @@
+Scenario.name = Festival
+Scenario.simulateConnections = true
+
+Scenario.endTime =  254150
+Scenario.endTime =  86400
+Scenario.endTime =  15100
+
+Events.nrof = 1
+
+Group.nrofHosts = 41
+Group.groupID = x
+Group.speed = 1,2
+
+Group.movementModel = RandomWalk
+MovementModel.worldSize = 800,800
+

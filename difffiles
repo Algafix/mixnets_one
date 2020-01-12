@@ -1,0 +1,8 @@
+diff -r ./core/DTNHost.java ../oneorig/one_1.5.1-RC2/core/DTNHost.java
+diff -r ./core/Message.java ../oneorig/one_1.5.1-RC2/core/Message.java
+diff -r ./default_settings.txt ../oneorig/one_1.5.1-RC2/default_settings.txt
+diff -r ./input/MessageCreateEvent.java ../oneorig/one_1.5.1-RC2/input/MessageCreateEvent.java
+diff -r ./one.sh ../oneorig/one_1.5.1-RC2/one.sh
+diff -r ./routing/ActiveRouter.java ../oneorig/one_1.5.1-RC2/routing/ActiveRouter.java
+diff -r ./routing/MessageRouter.java ../oneorig/one_1.5.1-RC2/routing/MessageRouter.java
+

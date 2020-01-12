@@ -1,0 +1,15 @@
+Scenario.name = Demos
+Scenario.simulateConnections = true
+
+Scenario.endTime =  254150
+Scenario.endTime =  86400
+
+Events.nrof = 1
+
+Group.nrofHosts = 41
+Group.groupID = x
+Group.speed = 1,2
+
+Group.movementModel = RandomWalk
+MovementModel.worldSize = 500,500
+

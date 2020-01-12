@@ -1,0 +1,61 @@
+Scenario.name = uno
+Scenario.simulateConnections = false
+Scenario.updateInterval = 1.0
+
+highspeedInterface.type = SimpleBroadcastInterface
+highspeedInterface.transmitSpeed = 100M
+highspeedInterface.transmitRange = 100
+
+Scenario.nrofHostGroups = 1
+
+SprayAndWaitRouter.binaryMode = 1
+SprayAndWaitRouter.nrofCopies = 1000
+MixnetRouter.startrate = 0
+MixnetRouter.stoprate = 0.2
+MixnetRouter.mixhosts = 0,40
+MixnetRouter.nrofmixes = 3
+MixnetRouter.broadcast = 1
+
+Group.msgTtl = 20000
+
+#Scenario.nrofHostGroups = 2
+Group.bufferSize = 50000
+Group.nrofInterfaces = 1
+Group.interface1 = highspeedInterface
+Group.movementModel = StationaryMovement
+Group.nodeLocation = 0,1
+
+Group.router = MixnetRouter
+#Group.router = EpidemicRouter
+
+
+Report.reportDir = reports/default
+
+MovementModel.rngSeed = 1
+MovementModel.worldSize = 0,0
+
+
+Report.nrofReports = 3
+Report.warmup = 0
+Report.report1 = MessageStatsReport
+Report.report2 = MessageDetailedReport
+Report.report3 = MessageStatsReportPerApplication
+Report.report4 = EncountersVSUniqueEncountersReport
+Report.report5 = InterContactTimesReport
+Report.report6 = UniqueEncountersReport
+Report.report7 = ContactsPerHourReport
+ 
+Optimization.cellSizeMult = 5
+Optimization.randomizeUpdateOrder = true
+
+Events1.class = MessageEventGenerator
+Events1.interval = 100
+Events1.size = 1
+Events1.hosts = 0, 40
+Events1.tohosts = 0, 1
+#Events1.mixhosts = 2, 38
+
+Events1.prefix = msg
+
+Events.nrof = 2
+

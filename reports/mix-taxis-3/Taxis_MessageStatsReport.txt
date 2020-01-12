@@ -1,0 +1,20 @@
+Message stats for scenario Taxis
+sim_time: 86000.0000
+created: 398
+started: 71123
+relayed: 70938
+aborted: 185
+dropped: 0
+removed: 0
+delivered: 259
+delivery_prob: 0.6508
+response_prob: 0.0000
+overhead_ratio: 272.8919
+latency_avg: 19893.6564
+latency_med: 13668.0000
+hopcount_avg: 5.5135
+hopcount_med: 5
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN

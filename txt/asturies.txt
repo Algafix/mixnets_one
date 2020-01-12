@@ -1,0 +1,22 @@
+Scenario.name = Asturias
+
+Scenario.endTime =  31622359
+Scenario.endTime =  86000
+
+Events2.class = StandardEventsReader
+#Events2.filePath = ../../traces/asturies-er-1year-10m.one
+Events2.filePath = traces/asturies-er-1year-10m.one
+Events2.nrofPreload = 6197327
+Events2.nrofPreload = 13000
+
+Scenario.nrofHostGroups = 2
+Group.nrofHosts = 230
+
+Group1.nrofHosts = 30
+Group1.groupID = x
+Group1.bufferSize = 1000
+
+Group2.nrofHosts = 200
+Group2.groupID = y
+Group2.bufferSize = 1000
+

@@ -1,0 +1,16 @@
+Scenario.name = Cambridge
+
+#Scenario.endTime =  987529
+Scenario.endTime = 86400
+
+Events2.class = StandardEventsReader
+Events2.filePath = traces/haggle-one-cambridge-city-complete.tsv
+Events2.nrofPreload = 987529
+
+Group.nrofHosts = 52
+Group.groupID = x
+Events1.hosts = 0, 52
+Events1.tohosts = 0, 52
+
+Report.reportDir = [reports_aleix/mix-cambridge-1;reports_aleix/mix-cambridge-2;reports_aleix/mix-cambridge-3;reports_aleix/mix-cambridge-4;reports_aleix/mix-cambridge-5]
+
