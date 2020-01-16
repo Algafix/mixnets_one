@@ -127,14 +127,14 @@ public class MixnetRouter extends ActiveRouter {
 	public boolean createNewMessage(Message msg) {
 
 		if (msg.toString().contains("r")){
-			// Si el missatge es una resposta, es a dir, aquest es el seu node desti.
+			// Si el missatge es una resposta, es a dir, aquest era el seu node desti
 		 	makeRoomForNewMessage(msg.getSize());
 			msg.setTtl(this.msgTtl);
 			addToMessages(msg, true);
 			return true;
 		}
 		else{
-			// Si aquest node crea un missatge (?)
+			// Si aquest node crea un missatge
 			double simTime = SimClock.getTime();
 			msg.mixcreationtime = simTime;
 			SimScenario scen = SimScenario.getInstance();

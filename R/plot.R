@@ -10,7 +10,7 @@ library(fitdistrplus)
 library(nlme)
 library(MuMIn)
 library(TeachingDemos)
-tere4Palette <- c("#4B574D", "#609F80", "#AF420A", "#CBB345")
+tere4Palette<-c("#4B574D", "#609F80", "#AF420A", "#CBB345")
 tere6Palette<-c("#004C3F", "#7DB343", "#E64A19","#398E3D", "#26A59A", "#FEC107")
 tere9Palette<-c("#004C3F", "#7DB343", "#E64A19","#398E3D", "#26A59A", "#FEC107","#ef8a62","#67a9cf","#91cf60")
 
