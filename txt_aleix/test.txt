@@ -1,0 +1,18 @@
+Scenario.name = testAleix
+
+Scenario.endTime = 10000
+
+#Events.nrof = 1
+
+Events2.class = StandardEventsReader
+Events2.filePath = traces/aleix.csv
+
+Group.nrofHosts = 5
+Group.groupID = t
+Events1.hosts = 0,5
+Events1.tohosts = 0,5
+MixnetRouter.mixhosts = 0,5
+MixnetRouter.broadcast = 0
+
+
+Report.reportDir = reports_aleix/testAleix

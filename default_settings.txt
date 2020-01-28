@@ -8,8 +8,6 @@ highspeedInterface.transmitRange = 100
 
 Scenario.nrofHostGroups = 1
 
-SprayAndWaitRouter.binaryMode = 1
-SprayAndWaitRouter.nrofCopies = 1000
 MixnetRouter.startrate = 0
 MixnetRouter.stoprate = 0.2
 MixnetRouter.mixhosts = 0,40
@@ -26,7 +24,6 @@ Group.movementModel = StationaryMovement
 Group.nodeLocation = 0,1
 
 Group.router = MixnetRouter
-#Group.router = EpidemicRouter
 
 
 Report.reportDir = reports/default
@@ -52,7 +49,7 @@ Events1.class = MessageEventGenerator
 Events1.interval = 100
 Events1.size = 1
 Events1.hosts = 0, 40
-Events1.tohosts = 0, 1
+#Events1.tohosts = 0, 1
 #Events1.mixhosts = 2, 38
 
 Events1.prefix = msg

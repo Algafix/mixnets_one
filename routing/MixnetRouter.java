@@ -104,11 +104,11 @@ public class MixnetRouter extends ActiveRouter {
 	 */
 	@Override
 	public Message messageTransferred(String id, DTNHost from) {
-	
+		
 		Message msg = super.messageTransferred(id, from);
 		msg.lastfwd = from.toString();
 		if (msg.getTo() == getHost() && msg.mixindex < nrofmixes) {
-			// generate a response message
+			//generate a response message
 			msg.mixindex++;
 			Message res = new Message(this.getHost(),msg.mixlist.get(msg.mixindex),
 						"r"+msg.mixindex+"-"+msg.getId(), msg.getResponseSize());
@@ -131,6 +131,8 @@ public class MixnetRouter extends ActiveRouter {
 		 	makeRoomForNewMessage(msg.getSize());
 			msg.setTtl(this.msgTtl);
 			addToMessages(msg, true);
+			System.out.println(SimClock.getTime() + " " + this.getHost()+":"+ this.getMessageCollection());
+
 			return true;
 		}
 		else{
@@ -143,6 +145,7 @@ public class MixnetRouter extends ActiveRouter {
 			double endTime = scen.getEndTime();
 			double prop = simTime / endTime;
 			//Not finished simulation are it is not response
+			//Només genera missatges en el primer 20% de la simulacio
             if ( prop > stoprate || prop < startrate){
                 return false;
 			}
@@ -165,6 +168,9 @@ public class MixnetRouter extends ActiveRouter {
 
 			msg.setTtl(this.msgTtl);
 			addToMessages(msg, true);
+
+			System.out.println(simTime + " " + this.getHost() + ":"+ this.getMessageCollection());
+
 			return true;
 	    }
     }
@@ -190,7 +196,7 @@ public class MixnetRouter extends ActiveRouter {
 	}
 	
 	/**
-	 * Es crida cada 1min de la simulació
+	 * Es crida cada 1s de la simulació
 	 */
 	@Override
 	public void update() {
@@ -235,8 +241,8 @@ public class MixnetRouter extends ActiveRouter {
 				if (othRouter.hasMessage(m.getId())) {
 					continue; // skip messages that the other one has
 				}
-				if (true) {
-					// the other node has higher probability of delivery
+				// Només transfereix si l'altre es el destinatari final
+				if (m.getTo().toString() == othRouter.getHost().toString()){
 					messages.add(new Tuple<Message, Connection>(m,con));
 				}
 			}			
