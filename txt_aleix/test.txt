@@ -13,6 +13,7 @@ Events1.hosts = 0,5
 Events1.tohosts = 0,5
 MixnetRouter.mixhosts = 0,5
 MixnetRouter.broadcast = 0
+MixnetRouter.nrofbundle = 2
 
 
 Report.reportDir = reports_aleix/testAleix
