@@ -47,6 +47,11 @@ public class MixnetRouter extends ActiveRouter {
 	 */
 	protected Map<DTNHost,Integer> nodeCount = new HashMap<>();
 
+	/**
+	 * Messages that can be delivered according to the mixnet especifications
+	 */
+	protected List<Message> pendingMessages = new ArrayList<>();
+
 	
 	/**
 	 * Constructor. Creates a new message router based on the settings in
@@ -94,14 +99,16 @@ public class MixnetRouter extends ActiveRouter {
     protected void transferDone(Connection con) {
             /* don't leave a copy for the sender */
 		if (broadcast == 0){
-            this.deleteMessage(con.getMessage().getId(), false);
+			Message m = con.getMessage();
+			if (m.mixindex < nrofmixes) {
+				this.removeFromMessages(m.getId());
+			} else {
+				this.deleteMessage(m.getId(), false);
+			}
 		}
     }
 
-	/**
-	 * Modificat per mixnets. 
-	 * Crea el missatge amb el super i afegeix les noves opcions.
-	 */
+
 	@Override
 	public Message messageTransferred(String id, DTNHost from) {
 		
@@ -128,15 +135,12 @@ public class MixnetRouter extends ActiveRouter {
 		if (msg.toString().contains("r")){
 			// Si el missatge es una resposta, ja ha estat mixejat abans
 
-			if(msg.getTo() == this.getHost()) {
-				messageTransferred(msg.getId(), this.getHost());
-			}
-
 		 	makeRoomForNewMessage(msg.getSize());
 			msg.setTtl(this.msgTtl);
 			addToMessages(msg, true);
 			addToHostCount(msg);
 
+			
 			System.out.print(SimClock.getTime()+" "+this.getHost()+":");
 			for(Message m : this.getMessageCollection()){
 				System.out.print(m.toString()+"->"+m.getTo()+" ");
@@ -145,6 +149,7 @@ public class MixnetRouter extends ActiveRouter {
 			System.out.println(
 				SimClock.getTime()+" "+this.getHost()+":"+this.nodeCount
 			);
+			
 
 			return true;
 		}
@@ -158,24 +163,21 @@ public class MixnetRouter extends ActiveRouter {
 			double endTime = scen.getEndTime();
 			double prop = simTime / endTime;
 
-			//Només genera missatges en el primer 20% de la simulacio
+			//Només genera missatges en el primer startrate% de la simulacio
             if ( prop > stoprate || prop < startrate){
                 return false;
 			}
 
 			// Agafem nrofmixes nodes mixnet i els posem a la llista a recorrer
-			for (int mix=1; mix<=nrofmixes;mix++){
-		
-				int host = drawHostAddress(mixHostRange);
+			int lastHost = msg.getFrom().getAddress();
+			for (int mix=1; mix<=nrofmixes; mix++){
+				int host = drawToAddress(mixHostRange, lastHost, msg.getTo().getAddress());
+				lastHost = host;
 				DTNHost mixnode = world.getNodeByAddress(host);
 				msg.mixlist.add(mixnode);
-				//System.out.println("Added mix " + mixnode + " to message " + msg);
-			
 			}
 
-			// Agefeix el desti real al final de la llista
-			// [mix1, mix2, mixN, desti]
-			// i posa com a desti actual el mix1 (mixindex = 0)
+			// Afegeix el desti real al final de la llista i posa com a desti el mix1
 			msg.mixlist.add(msg.getTo());
 			msg.setTo(msg.mixlist.get(msg.mixindex));
 			makeRoomForNewMessage(msg.getSize());
@@ -184,6 +186,7 @@ public class MixnetRouter extends ActiveRouter {
 			addToMessages(msg, true);
 			addToHostCount(msg);
 
+			
 			System.out.print(SimClock.getTime()+" "+this.getHost()+":");
 			for(Message m : this.getMessageCollection()){
 				System.out.print(m.toString()+"->"+m.getTo()+" ");
@@ -192,6 +195,7 @@ public class MixnetRouter extends ActiveRouter {
 			System.out.println(
 				SimClock.getTime()+" "+this.getHost()+":"+this.nodeCount
 			);
+			
 			return true;
 	    }
 	}
@@ -208,6 +212,22 @@ public class MixnetRouter extends ActiveRouter {
 	}
 
 	/**
+	 * Draws a destination host address that is different from the "from"
+	 * address
+	 * @param hostRange The range of hosts
+	 * @param from the "from" address
+	 * @return a destination address from the range, but different from "from"
+	 */
+	protected int drawToAddress(int hostRange[], int from, int realTo) {
+		int to;
+		do {
+			to = drawHostAddress(hostRange); 
+		} while (from==to || realTo==to);
+		
+		return to;
+	}
+
+	/**
 	 *  Utilitzat per escollir nodes mixnet pel "cami"
 	 */
     protected int drawHostAddress(int hostRange[]) {
@@ -215,22 +235,6 @@ public class MixnetRouter extends ActiveRouter {
 				return hostRange[0];
 		}
 		return hostRange[0] + rng.nextInt(hostRange[1] - hostRange[0]);
-	}
-
-	/**
-	 * Draws a destination host address that is different from the "from"
-	 * address
-	 * @param hostRange The range of hosts
-	 * @param from the "from" address
-	 * @return a destination address from the range, but different from "from"
-	 */
-	protected int drawToAddress(int hostRange[], int from) {
-		int to;
-		do {
-			to = drawHostAddress(hostRange); 
-		} while (from==to);
-		
-		return to;
 	}
 
 	/**
@@ -246,9 +250,7 @@ public class MixnetRouter extends ActiveRouter {
 		}
 	}
 	
-	/**
-	 * Es crida cada 1s de la simulació
-	 */
+
 	@Override
 	public void update() {
 		super.update();
@@ -257,9 +259,20 @@ public class MixnetRouter extends ActiveRouter {
 			return; // nothing to transfer or is currently transferring 
 		}
 
-		//exchangeDeliverableMessages();
+		updatePendingMessages(this.getMessageCollection());
 
 		tryOtherMessages();
+
+		if (SimClock.getIntTime() == 10000){
+			System.out.print(SimClock.getTime()+" "+this.getHost()+":");
+			for(Message m : this.getMessageCollection()){
+				System.out.print(m.toString()+"->"+m.getTo()+" ");
+			}
+			System.out.print("\n");
+			System.out.println(
+				SimClock.getTime()+" "+this.getHost()+":"+this.nodeCount
+			);
+		}
 
 	}
 	
@@ -272,31 +285,21 @@ public class MixnetRouter extends ActiveRouter {
 	private Tuple<Message, Connection> tryOtherMessages() {
 
 
-		// Missatges a enviar a la connexio
+		// Missatges a enviar
 		List<Tuple<Message, Connection>> messages = new ArrayList<Tuple<Message, Connection>>(); 
-		
-		// Missatges que té el router
-		Collection<Message> msgCollection = getMessageCollection();
-
-		// Fa una copia temporal de la variable que conté el número de missatges per node
-		Map<DTNHost,Integer> tempNodeCount = new HashMap<>(nodeCount);
 		
 		/* for all connected hosts collect all messages that have a higher
 		   probability of delivery by the other host */
 		for (Connection con : getConnections()) {
+
 			DTNHost other = con.getOtherNode(getHost());
 			MixnetRouter othRouter = (MixnetRouter)other.getRouter();
-			
 			
 			if (othRouter.isTransferring()) {
 				continue; // skip hosts that are transferring
 			}
 
-			if (nodeCount.getOrDefault(other,0) < nrofbundle) {
-				continue; // no transmet al host si no tenim prous missatges
-			}
-			
-			for (Message m : msgCollection) {
+			for (Message m : pendingMessages){
 
 				if (othRouter.hasMessage(m.getId())) {
 					continue; // skip messages that the other one has
@@ -304,13 +307,7 @@ public class MixnetRouter extends ActiveRouter {
 
 				// Només transfereix si l'altre es el destinatari final
 				if (m.getTo() == other) {
-
 					messages.add(new Tuple<Message, Connection>(m,con));
-
-					int tCountValue = tempNodeCount.get(m.getTo());
-					tempNodeCount.put(m.getTo(), tCountValue < 1 ? 0 : tCountValue-1);
-
-					System.out.println(SimClock.getTime()+" "+this.getHost()+":"+tempNodeCount);
 				}
 			}			
 		}
@@ -319,11 +316,26 @@ public class MixnetRouter extends ActiveRouter {
 			return null;
 		}
 		
-		// Actualitza la variable de recompte
-		nodeCount = tempNodeCount;
-		
-		// Transfereix tots els missatges a la connexió indicada
-		return tryMessagesForConnected(messages);
-	}	
+		// Intenta transferir els missatges a les connexions
+		Tuple<Message,Connection> sentMsg = tryMessagesForConnected(messages);
+		removeFromPendingMessages(sentMsg);
 
+		return sentMsg;
+	}
+
+	private void updatePendingMessages(Collection<Message> msgCollection) {
+		for(Message m : msgCollection){
+			if (nodeCount.getOrDefault(m.getTo(),0) >= nrofbundle) {
+				pendingMessages.add(m);
+			}
+		}
+	}
+
+	private void removeFromPendingMessages(Tuple<Message,Connection> sentMsg) {
+		if (sentMsg != null){
+			Message m = sentMsg.getKey();
+			pendingMessages.remove(m);
+			nodeCount.put(m.getTo(), nodeCount.getOrDefault(m.getTo(), 0) < 1 ? 0 : nodeCount.get(m.getTo())-1);
+		}
+	}
 }
