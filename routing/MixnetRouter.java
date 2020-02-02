@@ -9,11 +9,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import core.SimScenario;
 import core.World;
 import java.util.Random;
+import java.util.Set;
 
 import routing.util.RoutingInfo;
 
@@ -50,7 +52,7 @@ public class MixnetRouter extends ActiveRouter {
 	/**
 	 * Messages that can be delivered according to the mixnet especifications
 	 */
-	protected List<Message> pendingMessages = new ArrayList<>();
+	protected Set<Message> pendingMessages = new HashSet<>();
 
 	
 	/**
@@ -94,15 +96,21 @@ public class MixnetRouter extends ActiveRouter {
 		
 	}
 
-
+	/**
+	 * Method is called just before a transfer is finalized 
+	 * at {@link #update()}.
+	 * @param con The connection whose transfer was finalized
+	 */
 	@Override
     protected void transferDone(Connection con) {
-            /* don't leave a copy for the sender */
+		// Don't leave a copy on the sender
 		if (broadcast == 0){
 			Message m = con.getMessage();
 			if (m.mixindex < nrofmixes) {
+				// It's not the final node, don't inform
 				this.removeFromMessages(m.getId());
 			} else {
+				// It's the final node, inform listeners
 				this.deleteMessage(m.getId(), false);
 			}
 		}
@@ -213,10 +221,11 @@ public class MixnetRouter extends ActiveRouter {
 
 	/**
 	 * Draws a destination host address that is different from the "from"
-	 * address
+	 * address and from the real destination address
 	 * @param hostRange The range of hosts
 	 * @param from the "from" address
-	 * @return a destination address from the range, but different from "from"
+	 * @param realTo the original destination host
+	 * @return a destination address from the range, but different from "from" and "realTo"
 	 */
 	protected int drawToAddress(int hostRange[], int from, int realTo) {
 		int to;
@@ -228,7 +237,9 @@ public class MixnetRouter extends ActiveRouter {
 	}
 
 	/**
-	 *  Utilitzat per escollir nodes mixnet pel "cami"
+	 * Draws a host address from a range of addresses
+	 * @param hostRange The range of hosts
+	 * @return a destination address from the range
 	 */
     protected int drawHostAddress(int hostRange[]) {
 		if (hostRange[1] == hostRange[0]) {
@@ -259,7 +270,7 @@ public class MixnetRouter extends ActiveRouter {
 			return; // nothing to transfer or is currently transferring 
 		}
 
-		updatePendingMessages(this.getMessageCollection());
+		updatePendingMessages();
 
 		tryOtherMessages();
 
@@ -323,8 +334,8 @@ public class MixnetRouter extends ActiveRouter {
 		return sentMsg;
 	}
 
-	private void updatePendingMessages(Collection<Message> msgCollection) {
-		for(Message m : msgCollection){
+	public void updatePendingMessages() {
+		for(Message m : this.getMessageCollection()){
 			if (nodeCount.getOrDefault(m.getTo(),0) >= nrofbundle) {
 				pendingMessages.add(m);
 			}
