@@ -29,10 +29,10 @@ import core.SimClock;
 /**
  * Implementation of Mixnet router
  */
-public class MixnetRouter extends ActiveRouter {
+public class MixnetRouterB extends ActiveRouter {
 	
 	/** Mixent router's setting namespace ({@value})*/ 
-	public static final String MIXNET_NS = "MixnetRouter";
+	public static final String MIXNET_NS = "MixnetRouterB";
 
 	public int nrofmixes; 
 	public int broadcast;
@@ -44,9 +44,9 @@ public class MixnetRouter extends ActiveRouter {
 	public Random rng;
 
 	/**
-	 * Map that contains the number of messages for each node saved in this router.
+	 * Count of the messages in this node, can't use the size of the array because it changes
 	 */
-	protected Map<DTNHost,Integer> nodeCount = new HashMap<>();
+	protected int nodeCount = 0;
 
 	/**
 	 * Messages that can be delivered according to the mixnet especifications
@@ -59,7 +59,7 @@ public class MixnetRouter extends ActiveRouter {
 	 * the given Settings object.
 	 * @param s The settings object
 	 */
-	public MixnetRouter(Settings s) {
+	public MixnetRouterB(Settings s) {
 		super(s);
 		Settings mixnetSettings = new Settings(MIXNET_NS);
 		nrofmixes = mixnetSettings.getInt("nrofmixes");
@@ -74,7 +74,7 @@ public class MixnetRouter extends ActiveRouter {
 
     @Override
 	public MessageRouter replicate() {
-		MixnetRouter r = new MixnetRouter(this);
+		MixnetRouterB r = new MixnetRouterB(this);
 		return r;
 	}
     
@@ -82,7 +82,7 @@ public class MixnetRouter extends ActiveRouter {
 	 * Copyconstructor.
 	 * @param r The router prototype where setting values are copied from
 	 */
-	protected MixnetRouter(MixnetRouter r) {
+	protected MixnetRouterB(MixnetRouterB r) {
 		super(r);
 		this.stoprate = r.stoprate;
 		this.startrate = r.startrate;
@@ -209,13 +209,11 @@ public class MixnetRouter extends ActiveRouter {
 
 
 	/**
-	 * Adds the "to" (destination) of the message to the count of hosts
+	 * Increases in 1 the node count
 	 * @param msg Message wich destination will be added
 	 */
 	protected void addToHostCount(Message msg) {
-		DTNHost nextHost = msg.getTo();
-		nodeCount.put(
-			nextHost, nodeCount.getOrDefault(nextHost, 0) + 1);
+		this.nodeCount++;
 	}
 
 	/**
@@ -297,7 +295,7 @@ public class MixnetRouter extends ActiveRouter {
 		for (Connection con : getConnections()) {
 
 			DTNHost other = con.getOtherNode(getHost());
-			MixnetRouter othRouter = (MixnetRouter)other.getRouter();
+			MixnetRouterB othRouter = (MixnetRouterB)other.getRouter();
 			
 			if (othRouter.isTransferring()) {
 				continue; // skip hosts that are transferring
@@ -329,7 +327,7 @@ public class MixnetRouter extends ActiveRouter {
 
 	public void updatePendingMessages() {
 		for(Message m : this.getMessageCollection()){
-			if (nodeCount.getOrDefault(m.getTo(),0) >= nrofbundle) {
+			if (nodeCount >= nrofbundle) {
 				pendingMessages.add(m);
 			}
 		}
@@ -339,7 +337,7 @@ public class MixnetRouter extends ActiveRouter {
 		if (sentMsg != null){
 			Message m = sentMsg.getKey();
 			pendingMessages.remove(m);
-			nodeCount.put(m.getTo(), nodeCount.getOrDefault(m.getTo(), 0) < 1 ? 0 : nodeCount.get(m.getTo())-1);
+			this.nodeCount--;
 		}
 	}
 }
