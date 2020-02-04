@@ -37,6 +37,8 @@ public class MixnetRouterB extends ActiveRouter {
 	public int nrofmixes; 
 	public int broadcast;
 	public int nrofbundle;
+	public double maxTime;
+	public double delayTimer;
 	public double stoprate;
 	public double startrate;
 	/** Range of host addresses that can be mixers */
@@ -68,6 +70,7 @@ public class MixnetRouterB extends ActiveRouter {
 		broadcast = mixnetSettings.getInt("broadcast");
 		mixHostRange = mixnetSettings.getCsvInts("mixhosts", 2);
 		nrofbundle = mixnetSettings.getInt("nrofbundle");
+		maxTime = mixnetSettings.getDouble("maxTime");
 		//this.rng = new Random(getHost().toString().hashCode());
 		this.rng = new Random(25);
 	}
@@ -90,6 +93,8 @@ public class MixnetRouterB extends ActiveRouter {
 		this.broadcast = r.broadcast;
 		this.mixHostRange = r.mixHostRange;
 		this.nrofbundle = r.nrofbundle;
+		this.maxTime = r.maxTime;
+		this.delayTimer = r.delayTimer;
 		this.rng = r.rng;
 		
 		
@@ -105,7 +110,11 @@ public class MixnetRouterB extends ActiveRouter {
 		// Don't leave a copy on the sender
 		if (broadcast == 0){
 			Message m = con.getMessage();
-			if (m.mixindex < nrofmixes) {
+			boolean isFakeMsg = m.toString().contains("f");
+			if (isFakeMsg) {
+				// It's fake message, abort it
+				this.deleteMessage(m.getId(), true);
+			} else if (m.mixindex < nrofmixes) {
 				// It's not the final node, don't inform
 				this.removeFromMessages(m.getId());
 			} else {
@@ -121,7 +130,8 @@ public class MixnetRouterB extends ActiveRouter {
 		
 		Message msg = super.messageTransferred(id, from);
 		msg.lastfwd = from.toString();
-		if (msg.getTo() == getHost() && msg.mixindex < nrofmixes) {
+		boolean isFakeMsg = msg.toString().contains("f");
+		if (msg.getTo() == getHost() && msg.mixindex < nrofmixes && !isFakeMsg) {
 			//generate a response message
 			msg.mixindex++;
 			Message res = new Message(this.getHost(),msg.mixlist.get(msg.mixindex),
@@ -147,18 +157,14 @@ public class MixnetRouterB extends ActiveRouter {
 			addToMessages(msg, true);
 			addToHostCount(msg);
 
-			
-			System.out.print(SimClock.getTime()+" "+this.getHost()+":");
-			for(Message m : this.getMessageCollection()){
-				System.out.print(m.toString()+"->"+m.getTo()+" ");
-			}
-			System.out.print("\n");
-			System.out.println(
-				SimClock.getTime()+" "+this.getHost()+":"+this.nodeCount
-			);
-			
+		} 
+		else if(msg.toString().contains("f")){
+			// If the message is fake
 
-			return true;
+			makeRoomForMessage(msg.getSize());
+			msg.setTtl(this.msgTtl);
+			addToMessages(msg, true);
+			addToHostCount(msg);
 		}
 		else{
 			// If this node creates the message
@@ -193,18 +199,27 @@ public class MixnetRouterB extends ActiveRouter {
 			addToMessages(msg, true);
 			addToHostCount(msg);
 
-			
-			System.out.print(SimClock.getTime()+" "+this.getHost()+":");
-			for(Message m : this.getMessageCollection()){
-				System.out.print(m.toString()+"->"+m.getTo()+" ");
-			}
-			System.out.print("\n");
-			System.out.println(
-				SimClock.getTime()+" "+this.getHost()+":"+this.nodeCount
-			);
-			
-			return true;
-	    }
+		}
+
+		if (this.nodeCount < this.nrofbundle) {
+			this.delayTimer = SimClock.getIntTime();
+		} else {
+			SimScenario scen = SimScenario.getInstance();
+			this.delayTimer = scen.getEndTime();
+		}
+
+		
+		System.out.print(SimClock.getTime()+" "+this.getHost()+":");
+		for(Message m : this.getMessageCollection()){
+			System.out.print(m.toString()+"->"+m.getTo()+" ");
+		}
+		System.out.print("\n");
+		System.out.println(
+			SimClock.getTime()+" "+this.getHost()+":"+this.nodeCount
+		);
+		
+
+		return true;
 	}
 
 
@@ -214,6 +229,22 @@ public class MixnetRouterB extends ActiveRouter {
 	 */
 	protected void addToHostCount(Message msg) {
 		this.nodeCount++;
+	}
+
+	/**
+	 * Draws a destination host address that is different from the "from"
+	 * address.
+	 * @param hostRange The range of hosts
+	 * @param from the "from" address
+	 * @return a destination address from the range, but different from "from"
+	 */
+	protected int drawToAddress(int hostRange[], int from) {
+		int to;
+		do {
+			to = drawHostAddress(hostRange); 
+		} while (from==to);
+		
+		return to;
 	}
 
 	/**
@@ -301,6 +332,10 @@ public class MixnetRouterB extends ActiveRouter {
 				continue; // skip hosts that are transferring
 			}
 
+			if ((SimClock.getTime() - this.delayTimer) >= this.maxTime){
+				createFakeMessage();
+			}
+
 			for (Message m : pendingMessages){
 
 				if (othRouter.hasMessage(m.getId())) {
@@ -325,7 +360,17 @@ public class MixnetRouterB extends ActiveRouter {
 		return sentMsg;
 	}
 
-	public void updatePendingMessages() {
+	protected void createFakeMessage() {
+		int to = drawToAddress(mixHostRange, getHost().getAddress());
+		SimScenario scen = SimScenario.getInstance();
+		World world = scen.getWorld();
+		Message fakeMsg = new Message(this.getHost(), world.getNodeByAddress(to),
+					 "f-"+getHost()+":"+SimClock.getIntTime(),0);
+
+		createNewMessage(fakeMsg);
+	}
+
+	protected void updatePendingMessages() {
 		for(Message m : this.getMessageCollection()){
 			if (nodeCount >= nrofbundle) {
 				pendingMessages.add(m);
@@ -333,7 +378,7 @@ public class MixnetRouterB extends ActiveRouter {
 		}
 	}
 
-	private void removeFromPendingMessages(Tuple<Message,Connection> sentMsg) {
+	protected void removeFromPendingMessages(Tuple<Message,Connection> sentMsg) {
 		if (sentMsg != null){
 			Message m = sentMsg.getKey();
 			pendingMessages.remove(m);

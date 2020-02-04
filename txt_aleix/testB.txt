@@ -20,6 +20,7 @@ MixnetRouterB.nrofmixes = 3
 MixnetRouterB.mixhosts = 0,5
 MixnetRouterB.broadcast = 0
 MixnetRouterB.nrofbundle = 2
+MixnetRouterB.maxTime = 3000
 
 
 Report.reportDir = reports_aleix/testAleixB
