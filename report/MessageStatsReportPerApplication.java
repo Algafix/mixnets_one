@@ -29,7 +29,7 @@ public class MessageStatsReportPerApplication extends Report implements MessageL
 	private Hashtable <String,ArrayList<Integer>> hopCountslist;
 	private Hashtable <String,ArrayList<Double>> msgBufferTimelist;
 	private Hashtable <String,ArrayList<Double>> rttlist; // round trip times
-
+	
 	
 	private Hashtable <String,Integer> nrofDroppedlist;
 	private Hashtable <String,Integer> nrofRemovedlist;

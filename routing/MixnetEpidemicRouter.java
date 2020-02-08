@@ -29,14 +29,14 @@ import core.SimClock;
 /**
  * Implementation of Mixnet router
  */
-public class MixnetRouter extends ActiveRouter {
+public class MixnetEpidemicRouter extends ActiveRouter {
 	
 	/** Mixent router's setting namespace ({@value})*/ 
-	public static final String MIXNET_NS = "MixnetRouter";
+	public static final String MIXNET_NS = "MixnetEpidemicRouter";
 
-	public int nrofmixes; 
-	public int broadcast;
-	public int nrofbundle;
+	public int nrofmixes;
+    public int nrofbundle;
+    public boolean activeDebug;
 	public double maxTime;
 	public double delayTimer;
 	public double stoprate;
@@ -45,39 +45,29 @@ public class MixnetRouter extends ActiveRouter {
 	protected int[] mixHostRange = null;
 	public Random rng;
 
-	/**
-	 * Count of the messages in this node, can't use the size of the array because it changes
-	 */
-	protected int nodeCount = 0;
-
-	/**
-	 * Messages that can be delivered according to the mixnet especifications
-	 */
-	protected Set<Message> pendingMessages = new HashSet<>();
-
 	
 	/**
 	 * Constructor. Creates a new message router based on the settings in
 	 * the given Settings object.
 	 * @param s The settings object
 	 */
-	public MixnetRouter(Settings s) {
+	public MixnetEpidemicRouter(Settings s) {
 		super(s);
 		Settings mixnetSettings = new Settings(MIXNET_NS);
 		nrofmixes = mixnetSettings.getInt("nrofmixes");
 		stoprate = mixnetSettings.getDouble("stoprate");
 		startrate = mixnetSettings.getDouble("startrate");
-		broadcast = mixnetSettings.getInt("broadcast");
 		mixHostRange = mixnetSettings.getCsvInts("mixhosts", 2);
 		nrofbundle = mixnetSettings.getInt("nrofbundle");
-		maxTime = mixnetSettings.getDouble("maxTime");
+        maxTime = mixnetSettings.getDouble("maxTime");
+        activeDebug = mixnetSettings.getBoolean("activedebug");
 		//this.rng = new Random(getHost().toString().hashCode());
 		this.rng = new Random(25);
 	}
 
     @Override
 	public MessageRouter replicate() {
-		MixnetRouter r = new MixnetRouter(this);
+		MixnetEpidemicRouter r = new MixnetEpidemicRouter(this);
 		return r;
 	}
     
@@ -85,49 +75,20 @@ public class MixnetRouter extends ActiveRouter {
 	 * Copyconstructor.
 	 * @param r The router prototype where setting values are copied from
 	 */
-	protected MixnetRouter(MixnetRouter r) {
+	protected MixnetEpidemicRouter(MixnetEpidemicRouter r) {
 		super(r);
 		this.stoprate = r.stoprate;
 		this.startrate = r.startrate;
 		this.nrofmixes = r.nrofmixes;
-		this.broadcast = r.broadcast;
 		this.mixHostRange = r.mixHostRange;
 		this.nrofbundle = r.nrofbundle;
 		this.maxTime = r.maxTime;
 		this.delayTimer = r.delayTimer;
-		this.rng = r.rng;
+        this.rng = r.rng;
+        this.activeDebug = r.activeDebug;
 		
 		
 	}
-
-	/**
-	 * Method is called just before a transfer is finalized 
-	 * at {@link #update()}.
-	 * @param con The connection whose transfer was finalized
-	 */
-	@Override
-    protected void transferDone(Connection con) {
-
-		Message m = con.getMessage();
-		boolean isFakeMsg = m.toString().contains("f");
-
-		if (isFakeMsg) {
-			// It's fake message, abort it
-			this.deleteMessage(m.getId(), true);
-		}
-
-		// Don't leave a copy on the sender
-		if (broadcast == 0){
-			if (m.mixindex < nrofmixes) {
-				// It's not the final node, don't inform
-				this.removeFromMessages(m.getId());
-			} else {
-				// It's the final node, inform listeners
-				this.deleteMessage(m.getId(), false);
-			}
-		}
-    }
-
 
 	@Override
 	public Message messageTransferred(String id, DTNHost from) {
@@ -147,18 +108,13 @@ public class MixnetRouter extends ActiveRouter {
 
 		} else {
 			addToMessages(msg, true);
-			addToHostCount(msg);
 			updateTimer();
 		}
 
-		System.out.print(SimClock.getTime()+" "+this.getHost()+":");
-		for(Message m : this.getMessageCollection()){
-			System.out.print(m.toString()+"->"+m.getTo()+" ");
-		}
-		System.out.print("\n");
-		System.out.println(
-			SimClock.getTime()+" "+this.getHost()+":"+this.nodeCount
-		);
+        if (activeDebug) {
+            debugFunction();
+        }
+		
 
 		return msg;
     }
@@ -213,42 +169,100 @@ public class MixnetRouter extends ActiveRouter {
 		}
 
 		addToMessages(msg, true);
-		addToHostCount(msg);
 		updateTimer();
 
-		System.out.print(SimClock.getTime()+" "+this.getHost()+":");
-		for(Message m : this.getMessageCollection()){
-			System.out.print(m.toString()+"->"+m.getTo()+" ");
-		}
-		System.out.print("\n");
-		System.out.println(
-			SimClock.getTime()+" "+this.getHost()+":"+this.nodeCount
-		);
-
-		
+        if (activeDebug) {
+            debugFunction();
+        }
 		
 		return true;
 	}
 
+	@Override
+	public void update() {
+        super.update();
+        
+        checkTimer();
+		
+		if (!canStartTransfer() || isTransferring()) {
+			return; // nothing to transfer or is currently transferring 
+        }
+
+		tryOtherMessages();
+
+		if (SimClock.getIntTime() == 10000 && activeDebug) {
+			debugFunction();
+		}
+
+	}
+	
+	/**
+	 * (Canviar comentaris de PROPhET)
+	 * Tries to send all other messages to all connected hosts ordered by
+	 * their delivery probability
+	 * @return The return value of {@link #tryMessagesForConnected(List)}
+	 */
+	private Tuple<Message, Connection> tryOtherMessages() {
+
+		List<Tuple<Message, Connection>> messages = new ArrayList<Tuple<Message, Connection>>(); 
+		
+		// For all connected hosts tries to send the messages
+		for (Connection con : getConnections()) {
+
+            Collection<Message> msgCollection = getMessageCollection();
+			DTNHost other = con.getOtherNode(getHost());
+			MixnetEpidemicRouter othRouter = (MixnetEpidemicRouter)other.getRouter();
+			
+			if (othRouter.isTransferring()) {
+				continue; // skip hosts that are transferring
+			}
+
+			for (Message m : msgCollection){
+
+				if (othRouter.hasMessage(m.getId())) {
+					continue; // skip messages that the other one has
+				}
+				messages.add(new Tuple<Message, Connection>(m,con));
+				
+			}			
+		}
+		
+		if (messages.size() == 0) {
+			return null;
+		}
+		
+		// Tries to send the messages
+		Tuple<Message,Connection> sentMsg = tryMessagesForConnected(messages);
+
+		return sentMsg;
+	}
+
+	protected void createFakeMessage() {
+		int to = drawToAddress(mixHostRange, getHost().getAddress());
+		SimScenario scen = SimScenario.getInstance();
+		World world = scen.getWorld();
+		Message fakeMsg = new Message(this.getHost(), world.getNodeByAddress(to),
+					 "f-"+getHost()+":"+SimClock.getIntTime(),0);
+
+		createNewMessage(fakeMsg);
+    }
+    
+    protected void checkTimer() {
+        if ((SimClock.getTime() - this.delayTimer) >= this.maxTime){
+            createFakeMessage();
+        }
+    }
 
 	/**
-	 * Update the timer after a transference
+	 * Update the timer after a new message appears in the msglist
 	 */
 	protected void updateTimer() {
-		if (this.nodeCount < this.nrofbundle) {
+		if (this.getNrofMessages() < this.nrofbundle) {
 			this.delayTimer = SimClock.getIntTime();
 		} else {
 			SimScenario scen = SimScenario.getInstance();
 			this.delayTimer = scen.getEndTime();
 		}
-	}
-
-	/**
-	 * Increases in 1 the node count
-	 * @param msg Message wich will be added
-	 */
-	protected void addToHostCount(Message msg) {
-		this.nodeCount++;
 	}
 
 	/**
@@ -304,103 +318,16 @@ public class MixnetRouter extends ActiveRouter {
 			DTNHost otherHost = con.getOtherNode(getHost());
 			
 		}
-	}
-	
-
-	@Override
-	public void update() {
-		super.update();
-		
-		if (!canStartTransfer() || isTransferring()) {
-			return; // nothing to transfer or is currently transferring 
-		}
-
-		updatePendingMessages();
-
-		tryOtherMessages();
-
-		if (SimClock.getIntTime() == 10000){
-			System.out.print(SimClock.getTime()+" "+this.getHost()+":");
+    }
+    
+    protected void debugFunction() {
+        System.out.print(SimClock.getTime()+" "+this.getHost()+":");
 			for(Message m : this.getMessageCollection()){
 				System.out.print(m.toString()+"->"+m.getTo()+" ");
 			}
 			System.out.print("\n");
 			System.out.println(
-				SimClock.getTime()+" "+this.getHost()+":"+this.nodeCount
+				SimClock.getTime()+" "+this.getHost()+":"+this.getNrofMessages()
 			);
-		}
-
-	}
-	
-	/**
-	 * (Canviar comentaris de PROPhET)
-	 * Tries to send all other messages to all connected hosts ordered by
-	 * their delivery probability
-	 * @return The return value of {@link #tryMessagesForConnected(List)}
-	 */
-	private Tuple<Message, Connection> tryOtherMessages() {
-
-		List<Tuple<Message, Connection>> messages = new ArrayList<Tuple<Message, Connection>>(); 
-		
-		// For all connected hosts tries to send the messages
-		for (Connection con : getConnections()) {
-
-			DTNHost other = con.getOtherNode(getHost());
-			MixnetRouter othRouter = (MixnetRouter)other.getRouter();
-			
-			if (othRouter.isTransferring()) {
-				continue; // skip hosts that are transferring
-			}
-
-			if ((SimClock.getTime() - this.delayTimer) >= this.maxTime){
-				createFakeMessage();
-			}
-
-			for (Message m : pendingMessages){
-
-				if (othRouter.hasMessage(m.getId())) {
-					continue; // skip messages that the other one has
-				}
-
-				messages.add(new Tuple<Message, Connection>(m,con));
-				
-			}			
-		}
-		
-		if (messages.size() == 0) {
-			return null;
-		}
-		
-		// Tries to send the messages
-		Tuple<Message,Connection> sentMsg = tryMessagesForConnected(messages);
-		removeFromPendingMessages(sentMsg);
-
-		return sentMsg;
-	}
-
-	protected void createFakeMessage() {
-		int to = drawToAddress(mixHostRange, getHost().getAddress());
-		SimScenario scen = SimScenario.getInstance();
-		World world = scen.getWorld();
-		Message fakeMsg = new Message(this.getHost(), world.getNodeByAddress(to),
-					 "f-"+getHost()+":"+SimClock.getIntTime(),0);
-
-		createNewMessage(fakeMsg);
-	}
-
-	protected void updatePendingMessages() {
-		for(Message m : this.getMessageCollection()){
-			if (nodeCount >= nrofbundle) {
-				pendingMessages.add(m);
-			}
-		}
-	}
-
-	protected void removeFromPendingMessages(Tuple<Message,Connection> sentMsg) {
-		if (sentMsg != null && broadcast == 0) {
-			Message m = sentMsg.getKey();
-			pendingMessages.remove(m);
-			this.nodeCount--;
-		}
-	}
+    }
 }

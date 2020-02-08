@@ -12,6 +12,8 @@ import java.util.Map;
 import core.DTNHost;
 import core.Message;
 import core.MessageListener;
+import core.SimScenario;
+import core.World;
 
 /**
  * Report for generating different kind of total statistics about message
@@ -37,7 +39,8 @@ public class MessageDetailedReport extends Report implements MessageListener {
 	private int nrofResponseReqCreated;
 	private int nrofResponseDelivered;
 	private int nrofDelivered;
-	
+	private int nrofOriginalMsg;
+
 	/**
 	 * Constructor.
 	 */
@@ -63,6 +66,7 @@ public class MessageDetailedReport extends Report implements MessageListener {
 		this.nrofResponseReqCreated = 0;
 		this.nrofResponseDelivered = 0;
 		this.nrofDelivered = 0;
+		this.nrofOriginalMsg = 0;
 	}
 
 	
@@ -98,9 +102,13 @@ public class MessageDetailedReport extends Report implements MessageListener {
 		}
 
 		this.nrofRelayed++;
+
+		if (m.toString().contains("msg")){
+
+		}
+
 		if (finalTarget && m.mixindex + 1 == m.mixlist.size()) {
-			this.latencies.add(getSimTime() - 
-				m.mixcreationtime );
+			this.latencies.add(getSimTime() - m.mixcreationtime);
 			this.nrofDelivered++;
 			this.hopCounts.add(m.getHops().size() - 1);
 			
