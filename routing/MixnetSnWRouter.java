@@ -119,7 +119,6 @@ public class MixnetSnWRouter extends ActiveRouter {
 		Message msg = super.messageTransferred(id, from);
 		boolean isFakeMsg = msg.toString().contains("f");
 		Integer nrofCopies = (Integer)msg.getProperty(MSG_COUNT_PROPERTY);
-
 		assert nrofCopies != null : "Not a SnW message: " + msg;
 
 		msg.lastfwd = from.toString();
@@ -136,7 +135,7 @@ public class MixnetSnWRouter extends ActiveRouter {
 		msg.updateProperty(MSG_COUNT_PROPERTY, nrofCopies);
 
 		if (msg.getTo() == getHost() && msg.mixindex < nrofmixes && !isFakeMsg) {
-			//generate a response message
+			//Mix message
 			msg.mixindex++;
 			Message res = new Message(this.getHost(),msg.mixlist.get(msg.mixindex),
 						"r"+msg.mixindex+"-"+msg.getId(), msg.getResponseSize());
@@ -230,7 +229,15 @@ public class MixnetSnWRouter extends ActiveRouter {
 		
 		this.copiesLeft = sortByQueueMode(getMessagesWithCopiesLeft());
 
-		tryOtherMessages();
+		if (getNrofMessages() >= this.nrofbundle) {
+
+			if (exchangeDeliverableMessages() != null) {
+				return;
+			}
+
+			tryOtherMessages();
+		}
+		
 
 		if (SimClock.getIntTime() == 10000 && activeDebug) {
 			debugFunction();
@@ -251,7 +258,6 @@ public class MixnetSnWRouter extends ActiveRouter {
 		// For all connected hosts tries to send the messages
 		for (Connection con : getConnections()) {
 
-            Collection<Message> msgCollection = getMessageCollection();
 			DTNHost other = con.getOtherNode(getHost());
 			MixnetSnWRouter othRouter = (MixnetSnWRouter)other.getRouter();
 			
@@ -259,7 +265,7 @@ public class MixnetSnWRouter extends ActiveRouter {
 				continue; // skip hosts that are transferring
 			}
 
-			for (Message m : msgCollection){
+			for (Message m : copiesLeft){
 
 				if (othRouter.hasMessage(m.getId())) {
 					continue; // skip messages that the other one has

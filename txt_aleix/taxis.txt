@@ -5,8 +5,8 @@ Scenario.endTime = 86400
 
 Events2.class = StandardEventsReader
 Events2.filePath = traces/taxi_february_1week_304nodes.txt
-Events2.nrofPreload = 449226
-
+#Events2.nrofPreload = 449226
+#Events2.nrofPreload = 43300
 Group.nrofHosts = 304
 Group.groupID = x
 Events1.hosts = 0, 301

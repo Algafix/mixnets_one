@@ -5,7 +5,8 @@ Scenario.endTime = 86000
 
 Events2.class = StandardEventsReader
 Events2.filePath = traces/Haggle3-Infocom5.csv
-Events2.nrofPreload = 44918
+#Events2.nrofPreload = 44918
+Events2.nrofPreload = 23036
 
 Group.nrofHosts = 41
 Group.groupID = x
