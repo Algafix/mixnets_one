@@ -20,7 +20,7 @@ MixnetSnWRouter.nrofmixes = 3
 MixnetSnWRouter.mixhosts = 0,5
 MixnetSnWRouter.nrofbundle = 6
 MixnetSnWRouter.maxTime = 1000
-MixnetSnWRouter.activedebug = 0
+MixnetSnWRouter.activedebug = 1
 
 
 Report.reportDir = reports_aleix/MixnetSnWRouter

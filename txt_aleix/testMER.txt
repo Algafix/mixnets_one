@@ -20,7 +20,7 @@ MixnetEpidemicRouter.nrofmixes = 3
 MixnetEpidemicRouter.mixhosts = 0,5
 MixnetEpidemicRouter.nrofbundle = 6
 MixnetEpidemicRouter.maxTime = 1000
-MixnetEpidemicRouter.activedebug = 0
+MixnetEpidemicRouter.activedebug = 1
 
 
 Report.reportDir = reports_aleix/MixnetEpidemicRouter

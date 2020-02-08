@@ -31,7 +31,23 @@ import core.SimClock;
  */
 public class MixnetSnWRouter extends ActiveRouter {
 	
-	/** Mixent router's setting namespace ({@value})*/ 
+	// SnW variables
+	/** identifier for the initial number of copies setting ({@value})*/ 
+	public static final String NROF_COPIES = "nrofCopies";
+	/** identifier for the binary-mode setting ({@value})*/ 
+	public static final String BINARY_MODE = "binaryMode";
+	/** SprayAndWait router's settings name space ({@value})*/ 
+	public static final String SPRAYANDWAIT_NS = "SprayAndWaitRouter";
+	/** Message property key */
+	public static final String MSG_COUNT_PROPERTY = SPRAYANDWAIT_NS + "." +
+		"copies";
+	
+	protected int initialNrofCopies;
+	protected boolean isBinary;
+	List<Message> copiesLeft;
+
+
+	// Mixnet router variables 
 	public static final String MIXNET_NS = "MixnetSnWRouter";
 
 	public int nrofmixes;
@@ -61,8 +77,10 @@ public class MixnetSnWRouter extends ActiveRouter {
 		nrofbundle = mixnetSettings.getInt("nrofbundle");
         maxTime = mixnetSettings.getDouble("maxTime");
         activeDebug = mixnetSettings.getBoolean("activedebug");
-		//this.rng = new Random(getHost().toString().hashCode());
 		this.rng = new Random(25);
+
+		initialNrofCopies = mixnetSettings.getInt(NROF_COPIES);
+		isBinary = mixnetSettings.getBoolean(BINARY_MODE);
 	}
 
     @Override
@@ -86,16 +104,37 @@ public class MixnetSnWRouter extends ActiveRouter {
 		this.delayTimer = r.delayTimer;
         this.rng = r.rng;
         this.activeDebug = r.activeDebug;
-		
-		
+		this.initialNrofCopies = r.initialNrofCopies;
+		this.isBinary = r.isBinary;
+		this.copiesLeft = r.copiesLeft;
+	}
+
+	@Override
+	public int receiveMessage(Message m, DTNHost from) {
+		return super.receiveMessage(m, from);
 	}
 
 	@Override
 	public Message messageTransferred(String id, DTNHost from) {
-		
 		Message msg = super.messageTransferred(id, from);
-		msg.lastfwd = from.toString();
 		boolean isFakeMsg = msg.toString().contains("f");
+		Integer nrofCopies = (Integer)msg.getProperty(MSG_COUNT_PROPERTY);
+
+		assert nrofCopies != null : "Not a SnW message: " + msg;
+
+		msg.lastfwd = from.toString();
+
+		if (isBinary) {
+			/* in binary S'n'W the receiving node gets ceil(n/2) copies */
+			nrofCopies = (int)Math.ceil(nrofCopies/2.0);
+		}
+		else {
+			/* in standard S'n'W the receiving node gets only single copy */
+			nrofCopies = 1;
+		}
+		
+		msg.updateProperty(MSG_COUNT_PROPERTY, nrofCopies);
+
 		if (msg.getTo() == getHost() && msg.mixindex < nrofmixes && !isFakeMsg) {
 			//generate a response message
 			msg.mixindex++;
@@ -168,6 +207,7 @@ public class MixnetSnWRouter extends ActiveRouter {
 			msg.setTtl(this.msgTtl);
 		}
 
+		msg.addProperty(MSG_COUNT_PROPERTY, new Integer(initialNrofCopies));
 		addToMessages(msg, true);
 		updateTimer();
 
@@ -186,7 +226,9 @@ public class MixnetSnWRouter extends ActiveRouter {
 		
 		if (!canStartTransfer() || isTransferring()) {
 			return; // nothing to transfer or is currently transferring 
-        }
+		}
+		
+		this.copiesLeft = sortByQueueMode(getMessagesWithCopiesLeft());
 
 		tryOtherMessages();
 
@@ -235,6 +277,55 @@ public class MixnetSnWRouter extends ActiveRouter {
 		Tuple<Message,Connection> sentMsg = tryMessagesForConnected(messages);
 
 		return sentMsg;
+	}
+
+	/**
+	 * Creates and returns a list of messages this router is currently
+	 * carrying and still has copies left to distribute (nrof copies > 1).
+	 * @return A list of messages that have copies left
+	 */
+	protected List<Message> getMessagesWithCopiesLeft() {
+		List<Message> list = new ArrayList<Message>();
+
+		for (Message m : getMessageCollection()) {
+			Integer nrofCopies = (Integer)m.getProperty(MSG_COUNT_PROPERTY);
+			assert nrofCopies != null : "SnW message " + m + " didn't have " + 
+				"nrof copies property!";
+			if (nrofCopies > 1) {
+				list.add(m);
+			}
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * Called just before a transfer is finalized (by 
+	 * {@link ActiveRouter#update()}).
+	 * Reduces the number of copies we have left for a message. 
+	 * In binary Spray and Wait, sending host is left with floor(n/2) copies,
+	 * but in standard mode, nrof copies left is reduced by one. 
+	 */
+	@Override
+	protected void transferDone(Connection con) {
+		Integer nrofCopies;
+		String msgId = con.getMessage().getId();
+		/* get this router's copy of the message */
+		Message msg = getMessage(msgId);
+
+		if (msg == null) { // message has been dropped from the buffer after..
+			return; // ..start of transfer -> no need to reduce amount of copies
+		}
+		
+		/* reduce the amount of copies left */
+		nrofCopies = (Integer)msg.getProperty(MSG_COUNT_PROPERTY);
+		if (isBinary) { 
+			nrofCopies /= 2;
+		}
+		else {
+			nrofCopies--;
+		}
+		msg.updateProperty(MSG_COUNT_PROPERTY, nrofCopies);
 	}
 
 	protected void createFakeMessage() {

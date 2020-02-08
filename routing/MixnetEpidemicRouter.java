@@ -188,7 +188,9 @@ public class MixnetEpidemicRouter extends ActiveRouter {
 			return; // nothing to transfer or is currently transferring 
         }
 
-		tryOtherMessages();
+        if (getNrofMessages() >= nrofbundle) {
+            tryOtherMessages();
+        }
 
 		if (SimClock.getIntTime() == 10000 && activeDebug) {
 			debugFunction();
