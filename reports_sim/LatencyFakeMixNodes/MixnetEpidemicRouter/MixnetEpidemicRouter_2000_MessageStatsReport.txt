@@ -1,0 +1,20 @@
+Message stats for scenario MixnetEpidemicRouter_2000
+sim_time: 86000.0000
+created: 25315
+started: 25034
+relayed: 25008
+aborted: 26
+dropped: 0
+removed: 0
+delivered: 618
+delivery_prob: 0.0244
+response_prob: 0.0000
+overhead_ratio: 39.4660
+latency_avg: 1534.5032
+latency_med: 45.0000
+hopcount_avg: 4.0858
+hopcount_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN

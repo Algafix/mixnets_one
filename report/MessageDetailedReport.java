@@ -145,10 +145,11 @@ public class MessageDetailedReport extends Report implements MessageListener {
 
 	@Override
 	public void done() {
-		write("Message stats for scenario " + getScenarioName() + 
+		String scenName = getScenarioName().split("_")[0];
+		write("Message stats for scenario " + scenName + 
 				"\nsim_time: " + format(getSimTime()));
 		for (Double value : this.latencies){
-		write(value+ " " + getScenarioName());
+		write(value+ " " + scenName);
 		}
 		super.done();
 	}

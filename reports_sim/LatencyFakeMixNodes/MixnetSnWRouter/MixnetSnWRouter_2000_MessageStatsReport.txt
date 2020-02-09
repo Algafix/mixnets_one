@@ -1,0 +1,20 @@
+Message stats for scenario MixnetSnWRouter_2000
+sim_time: 86000.0000
+created: 13288
+started: 13009
+relayed: 12981
+aborted: 28
+dropped: 0
+removed: 0
+delivered: 631
+delivery_prob: 0.0475
+response_prob: 0.0000
+overhead_ratio: 19.5721
+latency_avg: 4709.8336
+latency_med: 228.0000
+hopcount_avg: 1.8510
+hopcount_med: 2
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN

@@ -49,8 +49,6 @@ Events1.class = MessageEventGenerator
 Events1.interval = 100
 Events1.size = 1
 Events1.hosts = 0, 40
-#Events1.tohosts = 0, 1
-#Events1.mixhosts = 2, 38
 
 Events1.prefix = msg
 
