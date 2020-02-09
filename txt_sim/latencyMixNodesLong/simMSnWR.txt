@@ -1,4 +1,4 @@
-Scenario.name = MixnetSnWRouter_%%MixnetSnWRouter.maxTime%%
+Scenario.name = MixnetSnWRouter_%%MixnetSnWRouter.nrofmixes%%
 
 Scenario.endTime = 86000
 
@@ -15,14 +15,14 @@ Group.router = MixnetSnWRouter
 
 MixnetSnWRouter.startrate = 0
 MixnetSnWRouter.stoprate = 0.2
-MixnetSnWRouter.nrofmixes = 3
+MixnetSnWRouter.nrofmixes = [0;3;6;9;]
 MixnetSnWRouter.mixhosts = 0,41
 MixnetSnWRouter.nrofbundle = 6
-MixnetSnWRouter.maxTime = [100;500;1000;2000;3000;]
+MixnetSnWRouter.maxTime = 1000
 MixnetSnWRouter.activedebug = 0
 
 MixnetSnWRouter.nrofCopies = 20
 MixnetSnWRouter.binaryMode = 0
 
 
-Report.reportDir = reports_sim/LatencyFakeMixNodes/MixnetSnWRouter
+Report.reportDir = reports_sim/LatencyMixNodes/MixnetSnWRouter

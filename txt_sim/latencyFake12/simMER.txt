@@ -1,0 +1,25 @@
+Scenario.name = MixnetEpidemicRouter_%%MixnetEpidemicRouter.maxTime%%
+
+Scenario.endTime = 86000
+
+Events2.class = StandardEventsReader
+Events2.filePath = traces/Haggle3-Infocom5.csv
+Events2.nrofPreload = 23036
+
+Group.nrofHosts = 41
+Group.groupID = t
+Events1.hosts = 0,41
+Events1.tohosts = 0,41
+
+Group.router = MixnetEpidemicRouter
+
+MixnetEpidemicRouter.startrate = 0
+MixnetEpidemicRouter.stoprate = 0.2
+MixnetEpidemicRouter.nrofmixes = 3
+MixnetEpidemicRouter.mixhosts = 0,41
+MixnetEpidemicRouter.nrofbundle = 12
+MixnetEpidemicRouter.maxTime = [100;500;1000;2000;3000;]
+MixnetEpidemicRouter.activedebug = 0
+
+
+Report.reportDir = reports_sim/LatencyFakeMixNodes12/MixnetEpidemicRouter

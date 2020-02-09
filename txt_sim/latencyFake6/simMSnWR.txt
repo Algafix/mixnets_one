@@ -1,0 +1,28 @@
+Scenario.name = MixnetSnWRouter_%%MixnetSnWRouter.maxTime%%
+
+Scenario.endTime = 86000
+
+Events2.class = StandardEventsReader
+Events2.filePath = traces/Haggle3-Infocom5.csv
+Events2.nrofPreload = 23036
+
+Group.nrofHosts = 41
+Group.groupID = t
+Events1.hosts = 0,41
+Events1.tohosts = 0,41
+
+Group.router = MixnetSnWRouter
+
+MixnetSnWRouter.startrate = 0
+MixnetSnWRouter.stoprate = 0.2
+MixnetSnWRouter.nrofmixes = 3
+MixnetSnWRouter.mixhosts = 0,41
+MixnetSnWRouter.nrofbundle = 6
+MixnetSnWRouter.maxTime = [100;500;1000;2000;3000;]
+MixnetSnWRouter.activedebug = 0
+
+MixnetSnWRouter.nrofCopies = 20
+MixnetSnWRouter.binaryMode = 0
+
+
+Report.reportDir = reports_sim/LatencyFakeMixNodes6/MixnetSnWRouter

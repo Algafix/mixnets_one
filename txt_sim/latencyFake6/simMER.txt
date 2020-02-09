@@ -22,4 +22,4 @@ MixnetEpidemicRouter.maxTime = [100;500;1000;2000;3000;]
 MixnetEpidemicRouter.activedebug = 0
 
 
-Report.reportDir = reports_sim/LatencyFakeMixNodes/MixnetEpidemicRouter
+Report.reportDir = reports_sim/LatencyFakeMixNodes6/MixnetEpidemicRouter

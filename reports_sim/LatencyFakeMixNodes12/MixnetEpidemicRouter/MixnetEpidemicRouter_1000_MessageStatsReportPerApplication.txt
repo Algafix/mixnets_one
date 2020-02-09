@@ -1,0 +1,106 @@
+Message stats for scenario MixnetEpidemicRouter_1000
+sim_time: 86000.0000
+Message stats for nodetypes java.util.Hashtable$Enumerator@4f3f5b24
+Message stats for nodetype t
+===================================
+relayed: 33033
+Message stats for application r-r-r-msg
+===================================
+created: 4219
+started: 4104
+relayed: 4104
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 100
+delivery_prob: 0.0237
+response_prob: 0.0000
+noverhead_ratio: 40.0400
+latency_avg: 603.5600
+latency_med: 22.0000
+hopcount_avg: 4.4500
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application f-t:
+===================================
+created: 13525
+started: 13155
+relayed: 13155
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 327
+delivery_prob: 0.0242
+response_prob: 0.0000
+noverhead_ratio: 39.2294
+latency_avg: 1561.4067
+latency_med: 90.0000
+hopcount_avg: 4.0703
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application r-msg
+===================================
+created: 5195
+started: 5178
+relayed: 5178
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 129
+delivery_prob: 0.0248
+response_prob: 0.0000
+noverhead_ratio: 39.1395
+latency_avg: 878.0000
+latency_med: 51.0000
+hopcount_avg: 3.8062
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application msg
+===================================
+created: 6117
+started: 6109
+relayed: 6092
+aborted: 17
+dropped: 0
+removed: 0
+delivered: 147
+delivery_prob: 0.0240
+response_prob: 0.0000
+noverhead_ratio: 40.4422
+latency_avg: 2047.0136
+latency_med: 113.0000
+hopcount_avg: 3.9932
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application r-r-msg
+===================================
+created: 4519
+started: 4504
+relayed: 4504
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 115
+delivery_prob: 0.0254
+response_prob: 0.0000
+noverhead_ratio: 38.1652
+latency_avg: 632.2087
+latency_med: 9.0000
+hopcount_avg: 4.0783
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
