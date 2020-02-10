@@ -1,8 +1,0 @@
-Message stats for scenario Info5
-sim_time: 3000.0000
-11.0 Info5
-6.0 Info5
-8.0 Info5
-4.0 Info5
-9.0 Info5
-5.0 Info5

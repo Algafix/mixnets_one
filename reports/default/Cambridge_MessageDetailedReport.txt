@@ -1,2 +1,0 @@
-Message stats for scenario Cambridge
-sim_time: 86400.0000
