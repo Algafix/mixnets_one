@@ -1,0 +1,4 @@
+Message stats for scenario MixnetEpidemicRouter
+sim_time: 86000.0000
+20367 Reals MixnetEpidemicRouter
+4948 Falsos MixnetEpidemicRouter

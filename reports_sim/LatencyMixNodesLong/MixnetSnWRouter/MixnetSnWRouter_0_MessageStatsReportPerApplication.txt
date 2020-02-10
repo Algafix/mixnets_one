@@ -1,0 +1,46 @@
+Message stats for scenario MixnetSnWRouter_0
+sim_time: 140000.0000
+Message stats for nodetypes java.util.Hashtable$Enumerator@36baf30c
+Message stats for nodetype t
+===================================
+relayed: 7763
+Message stats for application f-t:
+===================================
+created: 2977
+started: 2820
+relayed: 2820
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 148
+delivery_prob: 0.0497
+response_prob: 0.0000
+noverhead_ratio: 18.0541
+latency_avg: 10652.3581
+latency_med: 1045.0000
+hopcount_avg: 1.8108
+hopcount_med_med: 2
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application msg
+===================================
+created: 5223
+started: 4989
+relayed: 4943
+aborted: 46
+dropped: 0
+removed: 0
+delivered: 249
+delivery_prob: 0.0477
+response_prob: 0.0000
+noverhead_ratio: 18.8514
+latency_avg: 7773.7269
+latency_med: 491.0000
+hopcount_avg: 1.8675
+hopcount_med_med: 2
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN

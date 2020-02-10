@@ -1,0 +1,4 @@
+Message stats for scenario MixnetSnWRouter
+sim_time: 86000.0000
+10824 Reals MixnetSnWRouter
+2464 Falsos MixnetSnWRouter

@@ -1,0 +1,226 @@
+Message stats for scenario MixnetEpidemicRouter_9
+sim_time: 140000.0000
+Message stats for nodetypes java.util.Hashtable$Enumerator@cc34f4d
+Message stats for nodetype t
+===================================
+relayed: 70546
+Message stats for application r-r-msg
+===================================
+created: 8584
+started: 8552
+relayed: 8552
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 213
+delivery_prob: 0.0248
+response_prob: 0.0000
+noverhead_ratio: 39.1502
+latency_avg: 1048.1690
+latency_med: 44.0000
+hopcount_avg: 3.7465
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application msg
+===================================
+created: 10233
+started: 10247
+relayed: 10218
+aborted: 29
+dropped: 0
+removed: 0
+delivered: 265
+delivery_prob: 0.0259
+response_prob: 0.0000
+noverhead_ratio: 37.5585
+latency_avg: 2811.0189
+latency_med: 120.0000
+hopcount_avg: 3.9623
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application r-r-r-r-r-msg
+===================================
+created: 5902
+started: 5885
+relayed: 5884
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 153
+delivery_prob: 0.0259
+response_prob: 0.0000
+noverhead_ratio: 37.4575
+latency_avg: 1627.8562
+latency_med: 36.0000
+hopcount_avg: 4.0784
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application f-t:
+===================================
+created: 6047
+started: 5890
+relayed: 5890
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 146
+delivery_prob: 0.0241
+response_prob: 0.0000
+noverhead_ratio: 39.3425
+latency_avg: 3100.9110
+latency_med: 140.0000
+hopcount_avg: 4.0548
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application r-r-r-r-r-r-r-msg
+===================================
+created: 4199
+started: 4181
+relayed: 4181
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 103
+delivery_prob: 0.0245
+response_prob: 0.0000
+noverhead_ratio: 39.5922
+latency_avg: 1713.8058
+latency_med: 17.0000
+hopcount_avg: 3.9320
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application r-r-r-msg
+===================================
+created: 7681
+started: 7661
+relayed: 7661
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 193
+delivery_prob: 0.0251
+response_prob: 0.0000
+noverhead_ratio: 38.6943
+latency_avg: 1482.6891
+latency_med: 29.0000
+hopcount_avg: 3.8290
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application r-r-r-r-r-r-msg
+===================================
+created: 5153
+started: 5121
+relayed: 5121
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 121
+delivery_prob: 0.0235
+response_prob: 0.0000
+noverhead_ratio: 41.3223
+latency_avg: 1916.2562
+latency_med: 26.0000
+hopcount_avg: 3.9587
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application r-r-r-r-r-r-r-r-r-msg
+===================================
+created: 3096
+started: 3010
+relayed: 3010
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 71
+delivery_prob: 0.0229
+response_prob: 0.0000
+noverhead_ratio: 41.3944
+latency_avg: 880.1690
+latency_med: 13.0000
+hopcount_avg: 3.8873
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application r-msg
+===================================
+created: 9634
+started: 9614
+relayed: 9614
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 245
+delivery_prob: 0.0254
+response_prob: 0.0000
+noverhead_ratio: 38.2408
+latency_avg: 1926.2082
+latency_med: 50.0000
+hopcount_avg: 3.7020
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application r-r-r-r-r-r-r-r-msg
+===================================
+created: 3569
+started: 3552
+relayed: 3552
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 86
+delivery_prob: 0.0241
+response_prob: 0.0000
+noverhead_ratio: 40.3023
+latency_avg: 774.6395
+latency_med: 19.0000
+hopcount_avg: 3.9419
+hopcount_med_med: 3
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN
+Message stats for application r-r-r-r-msg
+===================================
+created: 6885
+started: 6863
+relayed: 6863
+aborted: 0
+dropped: 0
+removed: 0
+delivered: 171
+delivery_prob: 0.0248
+response_prob: 0.0000
+noverhead_ratio: 39.1345
+latency_avg: 2111.3275
+latency_med: 31.0000
+hopcount_avg: 4.2398
+hopcount_med_med: 4
+buffertime_avg: NaN
+buffertime_med: NaN
+rtt_avg: NaN
+rtt_med: NaN

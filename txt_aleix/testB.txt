@@ -1,26 +1,27 @@
-Scenario.name = testAleixB
+Scenario.name = MixnetEpidemicRouter_%%MixnetEpidemicRouter.maxTime%%
 
-Scenario.endTime = 10000
-
-#Events.nrof = 1
+Scenario.endTime = 86000
 
 Events2.class = StandardEventsReader
-Events2.filePath = traces/aleixB.csv
+Events2.filePath = traces/Haggle3-Infocom5.csv
+Events2.nrofPreload = 23036
 
-Group.nrofHosts = 5
+Group.nrofHosts = 41
 Group.groupID = t
-Events1.hosts = 0,5
-Events1.tohosts = 0,5
+Events1.hosts = 0,41
+Events1.tohosts = 0,41
 
-Group.router = MixnetRouterB
+Group.router = MixnetEpidemicRouter
 
-MixnetRouterB.startrate = 0
-MixnetRouterB.stoprate = 0.2
-MixnetRouterB.nrofmixes = 3
-MixnetRouterB.mixhosts = 0,5
-MixnetRouterB.broadcast = 0
-MixnetRouterB.nrofbundle = 5
-MixnetRouterB.maxTime = 2000
+MixnetEpidemicRouter.startrate = 0
+MixnetEpidemicRouter.stoprate = 0.2
+MixnetEpidemicRouter.nrofmixes = 0
+MixnetEpidemicRouter.mixhosts = 0,41
+MixnetEpidemicRouter.nrofbundle = 0
+MixnetEpidemicRouter.maxTime = 100000
+MixnetEpidemicRouter.activedebug = 0
+
+Report.nrofReports = 4
 
 
 Report.reportDir = reports_aleix/testAleixB
